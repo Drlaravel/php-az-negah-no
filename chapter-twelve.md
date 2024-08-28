@@ -1,218 +1,243 @@
 <div dir="rtl" style="font-family: 'Vazir', sans-serif; line-height: 1.8;">
----
-
-### فصل دوازدهم: کار با API‌ها
 
 ---
+در فصل دوازدهم، به مبحث کار با API‌ها (رابط‌های برنامه‌نویسی کاربردی) در PHP خواهیم پرداخت. API‌ها به شما امکان می‌دهند که برنامه‌های وب خود را به سرویس‌های دیگر متصل کنید، داده‌ها را به اشتراک بگذارید و قابلیت‌های جدیدی به برنامه‌های خود اضافه کنید. در این فصل، به بررسی نحوه استفاده از API‌های RESTful، ارسال درخواست‌های HTTP، دریافت و پردازش پاسخ‌ها، و پیاده‌سازی API‌های ساده در PHP خواهیم پرداخت.
 
-## 12.1 معرفی API‌ها
+### **فصل دوازدهم: کار با API‌ها در PHP**
 
-API (Application Programming Interface) یک واسط است که به برنامه‌ها اجازه می‌دهد با یکدیگر ارتباط برقرار کنند. API‌ها معمولاً برای تبادل داده‌ها بین برنامه‌های مختلف استفاده می‌شوند.
+---
 
-## 12.2 معرفی RESTful API
+### **12.1 مقدمه‌ای بر API‌ها**
 
-REST (Representational State Transfer) یک سبک معماری است که برای ساخت API‌ها استفاده می‌شود. RESTful API‌ها از پروتکل HTTP برای ارتباطات استفاده می‌کنند و معمولاً از فرمت JSON برای تبادل داده‌ها بهره می‌برند.
+API مخفف "Application Programming Interface" به معنای رابط برنامه‌نویسی کاربردی است. APIها به برنامه‌های مختلف اجازه می‌دهند که با یکدیگر ارتباط برقرار کنند و داده‌ها و خدمات خود را به اشتراک بگذارند. یکی از رایج‌ترین انواع APIها، **RESTful API** است که از پروتکل HTTP برای ارسال و دریافت داده‌ها استفاده می‌کند.
 
-### 12.2.1 متدهای HTTP
+### **12.2 RESTful API چیست؟**
 
-RESTful API‌ها از متدهای HTTP مختلفی برای انجام عملیات مختلف استفاده می‌کنند:
+REST (Representational State Transfer) یک سبک معماری برای طراحی APIهای وب است که از پروتکل HTTP برای عملیات CRUD (Create, Read, Update, Delete) استفاده می‌کند. RESTful APIها به شما این امکان را می‌دهند که از طریق URLها به منابع مختلف دسترسی پیدا کرده و عملیات‌های مختلفی بر روی آن‌ها انجام دهید.
 
-- **GET**: برای دریافت داده‌ها.
-- **POST**: برای ایجاد داده‌های جدید.
-- **PUT**: برای به‌روزرسانی داده‌ها.
-- **DELETE**: برای حذف داده‌ها.
+#### **12.2.1 عملیات HTTP رایج در RESTful API**
 
-## 12.3 ایجاد یک API ساده با PHP
+- **GET:** برای دریافت داده‌ها از سرور (خواندن).
+- **POST:** برای ارسال داده‌های جدید به سرور (ایجاد).
+- **PUT:** برای به‌روزرسانی داده‌های موجود در سرور (به‌روزرسانی).
+- **DELETE:** برای حذف داده‌های موجود در سرور (حذف).
 
-### 12.3.1 ایجاد یک API برای مدیریت کاربران
+### **12.3 ارسال درخواست‌های HTTP در PHP**
 
-در اینجا یک API ساده برای مدیریت کاربران ایجاد می‌کنیم که شامل عملیات CRUD است.
+برای ارسال درخواست‌های HTTP به یک API خارجی، می‌توان از توابع داخلی PHP مانند `file_get_contents()` و `cURL` استفاده کرد. `cURL` یک کتابخانه قدرتمند برای ارسال درخواست‌های HTTP در PHP است که انعطاف‌پذیری بالایی را برای کار با APIها فراهم می‌کند.
 
-#### 12.3.1.1 دریافت لیست کاربران
+#### **12.3.1 استفاده از `file_get_contents()` برای ارسال درخواست‌های GET**
+
+**مثال: ارسال درخواست GET به یک API:**
 
 ```php
 <?php
-header("Content-Type: application/json");
+$url = "https://jsonplaceholder.typicode.com/posts/1";
+$response = file_get_contents($url); // ارسال درخواست GET به API
+$data = json_decode($response, true); // تبدیل پاسخ JSON به آرایه PHP
 
-$users = [
-    ["id" => 1, "name" => "Ali", "email" => "ali@example.com"],
-    ["id" => 2, "name" => "Mina", "email" => "mina@example.com"]
-];
-
-echo json_encode($users);
+echo "Title: " . $data['title'] . "<br>";
+echo "Body: " . $data['body'];
 ?>
 ```
 
-#### 12.3.1.2 دریافت یک کاربر با ID
+در این مثال، یک درخواست GET به یک API نمونه ارسال شده و پاسخ JSON دریافت شده و به آرایه PHP تبدیل شده است.
+
+#### **12.3.2 استفاده از cURL برای ارسال درخواست‌های GET و POST**
+
+**مثال: ارسال درخواست GET با cURL:**
 
 ```php
 <?php
-header("Content-Type: application/json");
+$ch = curl_init(); // شروع یک جلسه cURL
+curl_setopt($ch, CURLOPT_URL, "https://jsonplaceholder.typicode.com/posts/1"); // تنظیم URL
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // بازگرداندن پاسخ به جای نمایش مستقیم
+$response = curl_exec($ch); // اجرای درخواست GET
+curl_close($ch); // بستن جلسه cURL
 
-$users = [
-    1 => ["name" => "Ali", "email" => "ali@example.com"],
-    2 => ["name" => "Mina", "email" => "mina@example.com"]
-];
+$data = json_decode($response, true);
+echo "Title: " . $data['title'] . "<br>";
+echo "Body: " . $data['body'];
+?>
+```
 
-$id = $_GET['id'];
-if (isset($users[$id])) {
-    echo json_encode($users[$id]);
-} else {
-    http_response_code(404);
-    echo json_encode(["message" => "User not found"]);
+**مثال: ارسال درخواست POST با cURL:**
+
+```php
+<?php
+$ch = curl_init("https://jsonplaceholder.typicode.com/posts"); // تنظیم URL
+$data = array(
+    'title' => 'Sample Title',
+    'body' => 'This is a sample post.',
+    'userId' => 1
+);
+
+curl_setopt($ch, CURLOPT_POST, true); // تنظیم درخواست به POST
+curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data)); // ارسال داده‌ها به صورت JSON
+curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json')); // تنظیم نوع محتوا به JSON
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // بازگرداندن پاسخ
+
+$response = curl_exec($ch); // اجرای درخواست POST
+curl_close($ch); // بستن جلسه cURL
+
+echo "Response: " . $response;
+?>
+```
+
+### **12.4 پیاده‌سازی یک API ساده در PHP**
+
+در PHP، می‌توان به راحتی یک API ساده ایجاد کرد که درخواست‌های HTTP را پردازش کرده و پاسخ‌های مناسب ارسال کند. برای این کار، می‌توان از ساختار فایل PHP معمولی استفاده کرد.
+
+#### **12.4.1 پیاده‌سازی یک API ساده برای مدیریت کاربران**
+
+در این مثال، یک API ساده برای مدیریت کاربران ایجاد می‌شود که امکان عملیات‌های CRUD را فراهم می‌کند.
+
+**ساختار فایل:**
+- `api.php`
+
+**کد نمونه:**
+
+```php
+<?php
+header("Content-Type: application/json"); // تنظیم نوع محتوا به JSON
+$request_method = $_SERVER["REQUEST_METHOD"]; // دریافت متد درخواست
+
+switch ($request_method) {
+    case 'GET':
+        getUsers();
+        break;
+    case 'POST':
+        addUser();
+        break;
+    case 'PUT':
+        updateUser();
+        break;
+    case 'DELETE':
+        deleteUser();
+        break;
+    default:
+        echo json_encode(["message" => "Invalid request method"]);
+        break;
+}
+
+// توابع مدیریت کاربران
+function getUsers() {
+    // دریافت کاربران از پایگاه داده (نمونه)
+    $users = [
+        ["id" => 1, "name" => "John Doe", "email" => "john@example.com"],
+        ["id" => 2, "name" => "Jane Doe", "email" => "jane@example.com"]
+    ];
+    echo json_encode($users);
+}
+
+function addUser() {
+    // دریافت داده‌های کاربر از درخواست POST
+    $data = json_decode(file_get_contents("php://input"), true);
+    if (!empty($data["name"]) && !empty($data["email"])) {
+        // اضافه کردن کاربر به پایگاه داده (نمونه)
+        echo json_encode(["message" => "User added successfully"]);
+    } else {
+        echo json_encode(["message" => "Invalid user data"]);
+    }
+}
+
+function updateUser() {
+    // دریافت داده‌های کاربر از درخواست PUT
+    $data = json_decode(file_get_contents("php://input"), true);
+    if (!empty($data["id"]) && (!empty($data["name"]) || !empty($data["email"]))) {
+        // به‌روزرسانی کاربر در پایگاه داده (نمونه)
+        echo json_encode(["message" => "User updated successfully"]);
+    } else {
+        echo json_encode(["message" => "Invalid user data"]);
+    }
+}
+
+function deleteUser() {
+    // دریافت ID کاربر از درخواست DELETE
+    $data = json_decode(file_get_contents("php://input"), true);
+    if (!empty($data["id"])) {
+        // حذف کاربر از پایگاه داده (نمونه)
+        echo json_encode(["message" => "User deleted successfully"]);
+    } else {
+        echo json_encode(["message" => "Invalid user ID"]);
+    }
 }
 ?>
 ```
 
-#### 12.3.1.3 ایجاد کاربر جدید
+### **12.5 ارسال و دریافت داده‌ها با فرمت JSON**
+
+JSON (JavaScript Object Notation) یک فرمت متداول برای تبادل داده‌ها بین کلاینت و سرور است. در PHP، می‌توان از توابع `json_encode()` و `json_decode()` برای کار با داده‌های JSON استفاده کرد.
+
+**مثال: تبدیل آرایه PHP به JSON:**
 
 ```php
 <?php
-header("Content-Type: application/json");
-
-$data = json_decode(file_get_contents("php://input"), true);
-$newUser = [
-    "id" => rand(1, 100),
-    "name" => $data['name'],
-    "email" => $data['email']
-];
-
-// اینجا می‌توانید کاربر جدید را به پایگاه داده اضافه کنید
-
-echo json_encode($newUser);
+$user = ["id" => 1, "name" => "John Doe", "email" => "john@example.com"];
+$json = json_encode($user); // تبدیل آرایه به JSON
+echo $json; // نمایش JSON
 ?>
 ```
 
-#### 12.3.1.4 به‌روزرسانی کاربر
+**مثال: تبدیل JSON به آرایه PHP:**
 
 ```php
 <?php
-header("Content-Type: application/json");
-
-$data = json_decode(file_get_contents("php://input"), true);
-$id = $_GET['id'];
-
-// اینجا می‌توانید کاربر را در پایگاه داده به‌روزرسانی کنید
-
-echo json_encode(["message" => "User updated", "id" => $id]);
+$json = '{"id":1,"name":"John Doe","email":"john@example.com"}';
+$user = json_decode($json, true); // تبدیل JSON به آرایه
+print_r($user); // نمایش آرایه
 ?>
 ```
 
-#### 12.3.1.5 حذف کاربر
+### **12.6 مدیریت احراز هویت و مجوزها در API‌ها**
+
+احراز هویت و مجوزها بخش‌های مهمی از طراحی یک API امن هستند. برای محافظت از APIها، معمولاً از تکنیک‌هایی مانند استفاده از توکن‌های API، JWT (JSON Web Tokens)، و OAuth استفاده می‌شود.
+
+#### **12.6.1 استفاده از توکن‌های API**
+
+توکن‌های API یک روش ساده برای احراز هویت کاربران و محدود کردن دسترسی به APIها هستند. این توکن‌ها می‌توانند به صورت دستی ایجاد شده و به کاربران اختصاص داده شوند.
+
+**مثال: بررسی توکن API در یک API ساده:**
 
 ```php
 <?php
-header("Content-Type: application/json");
+$valid_token = "YOUR_SECURE_TOKEN";
 
-$id = $_GET['id'];
-
-// اینجا می‌توانید کاربر را از پایگاه داده حذف کنید
-
-echo json_encode(["message" => "User deleted", "id" => $id]);
-?>
-```
-
-## 12.4 کار با cURL برای درخواست HTTP
-
-cURL یک ابزار خط فرمان و کتابخانه است که به شما اجازه می‌دهد درخواست‌های HTTP را ارسال کنید و پاسخ‌ها را دریافت کنید.
-
-### 12.4.1 ارسال درخواست GET
-
-```php
-<?php
-$ch = curl_init();
-
-curl_setopt($ch, CURLOPT_URL, "https://api.example.com/users");
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-
-$response = curl_exec($ch);
-curl_close($ch);
-
-echo $response;
-?>
-```
-
-### 12.4.2 ارسال درخواست POST
-
-```php
-<?php
-$ch = curl_init();
-
-$data = json_encode(["name" => "Ali", "email" => "ali@example.com"]);
-
-curl_setopt($ch, CURLOPT_URL, "https://api.example.com/users");
-curl_setopt($ch, CURLOPT_POST, 1);
-curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
-
-$response = curl_exec($ch);
-curl_close($ch);
-
-echo $response;
-?>
-```
-
-## 12.5 استفاده از JSON Web Tokens (JWT) برای احراز هویت
-
-JWT (JSON Web Token) یک استاندارد باز است که برای انتقال اطلاعات به صورت امن بین دو طرف استفاده می‌شود. JWT‌ها معمولاً برای احراز هویت در API‌ها استفاده می‌شوند.
-
-### 12.5.1 ایجاد و ارسال JWT
-
-```php
-<?php
-$header = json_encode(["alg" => "HS256", "typ" => "JWT"]);
-$payload = json_encode(["user_id" => 1, "name" => "Ali"]);
-$base64UrlHeader = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
-$base64UrlPayload = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
-$secret = "your-256-bit-secret";
-$signature = hash_hmac('sha256', $base64UrlHeader . "." . $base64UrlPayload, $secret, true);
-$base64UrlSignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
-$jwt = $base64UrlHeader . "." . $base64UrlPayload . "." . $base64UrlSignature;
-
-echo $jwt;
-?>
-```
-
-### 12.5.2 اعتبارسنجی JWT
-
-```php
-<?php
-$jwt = "your.jwt.token.here";
-$parts = explode(".", $jwt);
-$header = base64_decode($parts[0]);
-$payload = base64_decode($parts[1]);
-$signatureProvided = $parts[2];
-
-$secret = "your-256-bit-secret";
-$signature = hash_hmac('sha256', $parts[0] . "." . $parts[1], $secret, true);
-$base64UrlSignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
-
-if ($base64UrlSignature === $signatureProvided) {
-    echo "JWT is valid";
-} else {
-    echo "JWT is invalid";
+if ($_SERVER['HTTP_AUTHORIZATION'] !== $valid_token) {
+    http_response_code(401); // کد پاسخ 401 (Unauthorized)
+    echo json_encode(["message" => "Unauthorized"]);
+    exit();
 }
 ?>
 ```
 
----
+### **12.7 بهترین شیوه‌ها برای طراحی و پیاده‌سازی APIها**
 
-## تمرین‌های فصل دوازدهم
+1. **استفاده از HTTP Status Codes مناسب:** همیشه از کدهای وضعیت HTTP مناسب برای نشان دادن نتیجه درخواست‌ها استفاده کنید (مانند
 
-1. **ایجاد یک API ساده**: یک API ساده با PHP ایجاد کنید که عملیات CRUD برای کاربران را پیاده‌سازی کند.
+ 200 برای موفقیت، 404 برای پیدا نشدن، 500 برای خطاهای سرور).
+   
+2. **استفاده از ورژن‌بندی API:** ورژن‌بندی API به شما این امکان را می‌دهد که تغییرات آینده را بدون اختلال در نسخه‌های فعلی مدیریت کنید (مثلاً `/api/v1/users`).
 
-2. **ارسال درخواست GET با cURL**: یک درخواست GET با استفاده از cURL به یک API ارسال کنید و نتیجه را در مرورگر نمایش دهید.
+3. **مستندسازی APIها:** همیشه مستندات کامل و به‌روز برای APIهای خود ارائه دهید تا توسعه‌دهندگان دیگر به راحتی از آن‌ها استفاده کنند.
 
-3. **ارسال درخواست POST با cURL**: یک درخواست POST با استفاده از cURL به یک API ارسال کنید و داده‌ها را به سرور ارسال کنید.
+4. **استفاده از SSL/TLS برای امنیت:** برای محافظت از داده‌های ارسال‌شده بین کلاینت و سرور، همیشه از HTTPS استفاده کنید.
 
-4. **ایجاد و استفاده از JWT**: یک JWT ایجاد کنید و سپس آن را اعتبارسنجی کنید تا مطمئن شوید که JWT صحیح است.
+### **12.8 تمرین‌های فصل دوازدهم**
 
----
+1. **ارسال درخواست‌های GET و POST:** برنامه‌ای بنویسید که از cURL برای ارسال درخواست‌های GET و POST به یک API خارجی استفاده کند.
+   
+2. **پیاده‌سازی API ساده:** یک API ساده برای مدیریت کتاب‌ها بنویسید که عملیات‌های CRUD را پشتیبانی کند.
+   
+3. **کار با JSON در PHP:** برنامه‌ای بنویسید که داده‌های فرم را به JSON تبدیل کرده و آن‌ها را به یک API ارسال کند.
+   
+4. **مدیریت احراز هویت با توکن API:** برنامه‌ای ایجاد کنید که از توکن‌های API برای احراز هویت و دسترسی به منابع محافظت‌شده استفاده کند.
+   
+5. **مستندسازی API:** API خود را با استفاده از ابزارهایی مانند Swagger مستند کنید.
 
-## خلاصه فصل دوازدهم
+### **خلاصه فصل دوازدهم**
 
-در این فصل، با API‌ها و نحوه ایجاد و استفاده از آن‌ها در PHP آشنا شدید. شما یاد گرفتید که چگونه یک RESTful API ایجاد کنید و از متدهای HTTP برای انجام عملیات مختلف استفاده کنید. همچنین با ابزار cURL برای ارسال درخواست‌های HTTP و استفاده از JSON Web Tokens (JWT) برای احراز هویت آشنا شدید. API‌ها یکی از اجزای حیاتی برنامه‌های مدرن هستند و در این فصل، مهارت‌های لازم برای کار با API‌ها در PHP را به دست آوردید.
+در این فصل، با نحوه کار با APIها در PHP آشنا شدید. یاد گرفتید که چگونه درخواست‌های HTTP را با استفاده از `file_get_contents()` و `cURL` ارسال کنید، APIهای ساده را پیاده‌سازی کنید، داده‌ها را با فرمت JSON مدیریت کنید و از توکن‌های API برای احراز هویت استفاده کنید. پیروی از بهترین شیوه‌ها می‌تواند به شما کمک کند تا APIهای امن، قابل استفاده مجدد و کارآمدتری طراحی کنید.
 
 ---
 </div>

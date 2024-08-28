@@ -1,188 +1,257 @@
 <div dir="rtl" style="font-family: 'Vazir', sans-serif; line-height: 1.8;">
 ---
+در فصل نهم، به مبحث کار با پایگاه داده‌ها در PHP پرداخته خواهد شد. پایگاه داده‌ها یکی از اساسی‌ترین بخش‌های برنامه‌نویسی وب هستند و PHP به‌خوبی از انواع پایگاه داده‌ها پشتیبانی می‌کند. در این فصل، به بررسی نحوه اتصال به پایگاه داده، اجرای دستورات SQL، جلوگیری از حملات SQL Injection و تکنیک‌های بهینه‌سازی در کار با پایگاه داده خواهیم پرداخت.
 
-### فصل نهم: پایگاه داده‌ها
+### **فصل نهم: کار با پایگاه داده‌ها در PHP**
 
 ---
 
-## 9.1 معرفی پایگاه داده و MySQL
+### **9.1 مقدمه‌ای بر کار با پایگاه داده‌ها**
 
-پایگاه داده‌ها مکان‌هایی هستند که داده‌های ساختار یافته را ذخیره و مدیریت می‌کنند. MySQL یکی از محبوب‌ترین سیستم‌های مدیریت پایگاه داده رابطه‌ای (RDBMS) است که با PHP به خوبی سازگار است.
+پایگاه داده‌ها ابزاری برای ذخیره و مدیریت داده‌ها به صورت سازمان‌یافته هستند. در برنامه‌نویسی وب، پایگاه داده‌ها به برنامه‌ها این امکان را می‌دهند که اطلاعاتی مانند داده‌های کاربر، تنظیمات برنامه، تاریخچه تراکنش‌ها و سایر اطلاعات را ذخیره، بازیابی و مدیریت کنند. PHP به‌طور پیش‌فرض از چندین نوع پایگاه داده پشتیبانی می‌کند، از جمله MySQL، PostgreSQL، SQLite و SQL Server.
 
-### 9.1.1 نصب و راه‌اندازی MySQL
+برای کار با پایگاه داده‌ها در PHP، معمولاً از سه روش اصلی استفاده می‌شود:
 
-برای استفاده از MySQL با PHP، باید MySQL را نصب و راه‌اندازی کنید. در صورتی که از XAMPP یا WAMP استفاده می‌کنید، MySQL به صورت پیش‌فرض نصب شده و فعال است. می‌توانید MySQL را از طریق کنترل پنل XAMPP یا WAMP شروع کنید.
+1. **استفاده از کتابخانه MySQLi** (به معنی MySQL Improved): برای کار با پایگاه داده MySQL به صورت بهینه و امن.
+2. **استفاده از PDO (PHP Data Objects):** یک رابط جهانی برای کار با انواع مختلف پایگاه داده که به صورت شیءگرا عمل می‌کند.
+3. **استفاده از SQLite:** برای برنامه‌های کوچک‌تر یا کاربردهایی که نیاز به یک پایگاه داده داخلی سبک دارند.
 
-### 9.1.2 اتصال به MySQL
+### **9.2 کار با MySQLi**
 
-PHP دو روش اصلی برای اتصال به MySQL ارائه می‌دهد: MySQLi و PDO. در اینجا ما از MySQLi استفاده خواهیم کرد.
+کتابخانه MySQLi یکی از محبوب‌ترین روش‌ها برای اتصال به پایگاه داده MySQL و اجرای دستورات SQL است. MySQLi هم به صورت رویه‌ای (procedural) و هم به صورت شیءگرا (OOP) قابل استفاده است. در اینجا هر دو روش مورد بررسی قرار می‌گیرند.
 
-## 9.2 اتصال به MySQL با MySQLi
+#### **9.2.1 اتصال به پایگاه داده با MySQLi (روش شیءگرا)**
 
-### 9.2.1 اتصال به پایگاه داده
+برای اتصال به یک پایگاه داده MySQL، باید از کلاس `mysqli` استفاده کرد. این کلاس برای مدیریت اتصال به پایگاه داده و اجرای دستورات SQL استفاده می‌شود.
 
-برای اتصال به MySQL از تابع `mysqli_connect()` استفاده می‌کنیم:
-
-```php
-<?php
-$سرور = "localhost";
-$کاربر = "root";
-$رمزعبور = "";
-$پایگاه_داده = "test_db";
-
-$ارتباط = mysqli_connect($سرور, $کاربر, $رمزعبور, $پایگاه_داده);
-
-if (!$ارتباط) {
-    die("اتصال به پایگاه داده ناموفق بود: " . mysqli_connect_error());
-}
-echo "اتصال موفقیت‌آمیز بود!";
-?>
-```
-
-### 9.2.2 بستن اتصال
-
-پس از اتمام کار با پایگاه داده، باید اتصال را با استفاده از `mysqli_close()` ببندید:
+**مثال: اتصال به پایگاه داده MySQL:**
 
 ```php
 <?php
-mysqli_close($ارتباط);
-?>
-```
+$servername = "localhost"; // نام سرور
+$username = "root"; // نام کاربری پایگاه داده
+$password = ""; // رمز عبور پایگاه داده
+$dbname = "testdb"; // نام پایگاه داده
 
-## 9.3 عملیات CRUD (ایجاد، خواندن، بروزرسانی، حذف)
+// ایجاد اتصال
+$conn = new mysqli($servername, $username, $password, $dbname);
 
-CRUD (ایجاد، خواندن، بروزرسانی، حذف) عملیات اصلی است که بر روی پایگاه داده انجام می‌شود.
-
-### 9.3.1 ایجاد داده‌ها (CREATE)
-
-برای افزودن داده به یک جدول از `INSERT INTO` استفاده می‌شود
-
-:
-
-```php
-<?php
-$sql = "INSERT INTO users (name, email) VALUES ('Ali', 'ali@example.com')";
-
-if (mysqli_query($ارتباط, $sql)) {
-    echo "رکورد جدید با موفقیت اضافه شد.";
+// بررسی اتصال
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error); // نمایش پیام خطا در صورت عدم اتصال
 } else {
-    echo "خطا در افزودن رکورد: " . mysqli_error($ارتباط);
+    echo "Connected successfully";
 }
 ?>
 ```
 
-### 9.3.2 خواندن داده‌ها (READ)
+در این مثال، اتصال به پایگاه داده `testdb` در سرور محلی ایجاد شده است. در صورت عدم موفقیت در اتصال، پیامی نمایش داده می‌شود.
 
-برای خواندن داده‌ها از `SELECT` استفاده می‌شود:
+#### **9.2.2 اجرای دستورات SQL با MySQLi**
+
+پس از اتصال موفق به پایگاه داده، می‌توان دستورات SQL را برای ایجاد، خواندن، به‌روزرسانی و حذف داده‌ها (CRUD) اجرا کرد.
+
+**مثال: اجرای یک دستور SQL برای ایجاد جدول:**
 
 ```php
 <?php
-$sql = "SELECT id, name, email FROM users";
-$result = mysqli_query($ارتباط, $sql);
+$sql = "CREATE TABLE users (
+    id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(30) NOT NULL,
+    email VARCHAR(50),
+    reg_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+)";
 
-if (mysqli_num_rows($result) > 0) {
-    while($row = mysqli_fetch_assoc($result)) {
-        echo "id: " . $row["id"]. " - نام: " . $row["name"]. " - ایمیل: " . $row["email"]. "<br>";
+// اجرای دستور SQL
+if ($conn->query($sql) === TRUE) {
+    echo "Table 'users' created successfully";
+} else {
+    echo "Error creating table: " . $conn->error;
+}
+?>
+```
+
+#### **9.2.3 خواندن داده‌ها از پایگاه داده**
+
+برای خواندن داده‌ها از یک جدول، از دستور `SELECT` استفاده می‌شود. نتایج به‌دست‌آمده را می‌توان به شکل‌های مختلفی پردازش کرد.
+
+**مثال: خواندن تمام رکوردها از جدول `users`:**
+
+```php
+<?php
+$sql = "SELECT id, username, email FROM users";
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    // خروجی هر ردیف
+    while ($row = $result->fetch_assoc()) {
+        echo "ID: " . $row["id"] . " - Username: " . $row["username"] . " - Email: " . $row["email"] . "<br>";
     }
 } else {
-    echo "هیچ رکوردی یافت نشد.";
+    echo "0 results";
 }
 ?>
 ```
 
-### 9.3.3 بروزرسانی داده‌ها (UPDATE)
+#### **9.2.4 استفاده از دستورات آماده (Prepared Statements) برای امنیت بیشتر**
 
-برای بروزرسانی رکوردهای موجود از `UPDATE` استفاده می‌شود:
+برای جلوگیری از حملات SQL Injection، باید از دستورات آماده استفاده کرد. این دستورات به شما اجازه می‌دهند تا مقادیر ورودی کاربران را به صورت امن به دستورات SQL اضافه کنید.
+
+**مثال: استفاده از دستورات آماده برای جلوگیری از SQL Injection:**
 
 ```php
 <?php
-$sql = "UPDATE users SET email='newemail@example.com' WHERE id=1";
+$stmt = $conn->prepare("INSERT INTO users (username, email) VALUES (?, ?)");
+$stmt->bind_param("ss", $username, $email); // "ss" به معنای دو رشته (string)
 
-if (mysqli_query($ارتباط, $sql)) {
-    echo "رکورد با موفقیت بروزرسانی شد.";
-} else {
-    echo "خطا در بروزرسانی رکورد: " . mysqli_error($ارتباط);
+$username = "JohnDoe";
+$email = "johndoe@example.com";
+$stmt->execute(); // اجرای دستور آماده
+
+echo "New record created successfully";
+
+$stmt->close(); // بستن دستور آماده
+?>
+```
+
+### **9.3 کار با PDO (PHP Data Objects)**
+
+PDO یک روش پیشرفته‌تر و انعطاف‌پذیرتر برای کار با پایگاه داده‌ها در PHP است که از چندین نوع پایگاه داده پشتیبانی می‌کند. PDO به‌صورت شیءگرا عمل می‌کند و از دستورات آماده (Prepared Statements) به خوبی پشتیبانی می‌کند.
+
+#### **9.3.1 اتصال به پایگاه داده با استفاده از PDO**
+
+**مثال: اتصال به پایگاه داده MySQL با PDO:**
+
+```php
+<?php
+$dsn = "mysql:host=localhost;dbname=testdb"; // Data Source Name
+$username = "root"; // نام کاربری پایگاه داده
+$password = ""; // رمز عبور پایگاه داده
+
+try {
+    $conn = new PDO($dsn, $username, $password);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    echo "Connected successfully";
+} catch (PDOException $e) {
+    echo "Connection failed: " . $e->getMessage();
 }
 ?>
 ```
 
-### 9.3.4 حذف داده‌ها (DELETE)
+#### **9.3.2 اجرای دستورات SQL با PDO**
 
-برای حذف رکوردها از `DELETE` استفاده می‌شود:
+**مثال: ایجاد یک جدول با استفاده از PDO:**
 
 ```php
 <?php
-$sql = "DELETE FROM users WHERE id=1";
+$sql = "CREATE TABLE users (
+    id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(30) NOT NULL,
+    email VARCHAR(50),
+    reg_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+)";
 
-if (mysqli_query($ارتباط, $sql)) {
-    echo "رکورد با موفقیت حذف شد.";
-} else {
-    echo "خطا در حذف رکورد: " . mysqli_error($ارتباط);
+try {
+    $conn->exec($sql);
+    echo "Table 'users' created successfully";
+} catch (PDOException $e) {
+    echo "Error creating table: " . $e->getMessage();
 }
 ?>
 ```
 
-## 9.4 امنیت در برابر SQL Injection
+#### **9.3.3 استفاده از دستورات آماده در PDO**
 
-یکی از مهم‌ترین نکات در کار با پایگاه داده‌ها، جلوگیری از حملات SQL Injection است. برای این کار، باید داده‌های ورودی کاربران را پیش از استفاده در کوئری‌ها پاک‌سازی کنید.
-
-### 9.4.1 استفاده از `mysqli_real_escape_string()`
-
-این تابع داده‌های ورودی را پاک‌سازی می‌کند تا از ورود کدهای مخرب به پایگاه داده جلوگیری شود:
+**مثال: استفاده از دستورات آماده برای وارد کردن داده‌ها:**
 
 ```php
 <?php
-$نام = mysqli_real_escape_string($ارتباط, $_POST['name']);
-$sql = "INSERT INTO users (name) VALUES ('$نام')";
-?>
-```
+$sql = "INSERT INTO users (username, email) VALUES (:username, :email)";
+$stmt = $conn->prepare($sql);
 
-### 9.4.2 استفاده از Prepared Statements
+$stmt->bindParam(':username', $username);
+$stmt->bindParam(':email', $email);
 
-راه امن‌تر برای جلوگیری از SQL Injection، استفاده از Prepared Statements است:
-
-```php
-<?php
-$stmt = $ارتباط->prepare("INSERT INTO users (name, email) VALUES (?, ?)");
-$stmt->bind_param("ss", $name, $email);
-
-$name = "Ali";
-$email = "ali@example.com";
+$username = "JaneDoe";
+$email = "janedoe@example.com";
 $stmt->execute();
 
-$stmt->close();
+echo "New record created successfully";
 ?>
 ```
 
-## 9.5 ORM ها و معرفی به ابزارهایی مثل Eloquent
+### **9.4 بهینه‌سازی و نکات امنیتی در کار با پایگاه داده‌ها**
 
-ORM (Object-Relational Mapping) یک الگوی طراحی است که به شما امکان می‌دهد تا به جای نوشتن کوئری‌های SQL، با استفاده از اشیاء و متدهای شیءگرا به داده‌های پایگاه داده دسترسی پیدا کنید.
+#### **9.4.1 استفاده از دستورات آماده (Prepared Statements)**
 
-### 9.5.1 معرفی Eloquent
+استفاده از دستورات آماده به شدت توصیه می‌شود تا از حملات SQL Injection جلوگیری شود. این دستورات به صورت پویا با داده‌های ورودی کار می‌کنند و داده‌های کاربر را به صورت امن به دستورات SQL اضافه می‌کنند.
 
-Eloquent یک ORM قدرتمند است که در فریم‌ورک Laravel استفاده می‌شود. این ابزار به شما امکان می‌دهد تا به سادگی و با استفاده از متدهای شیءگرا به داده‌های پایگاه داده دسترسی پیدا کنید.
+#### **9.4.2 محدود کردن دسترسی به پایگاه داده**
+
+همیشه از حداقل دسترسی‌های ممکن برای کاربران پایگاه داده استفاده کنید. برای مثال، یک کاربر که فقط نیاز به خواندن داده‌ها دارد، نباید دسترسی نوشتن داشته باشد.
+
+#### **9.4.3 استفاده از تراکنش‌ها (Transactions)**
+
+تراکنش‌ها برای اطمینان از اینکه چندین عملیات پایگاه داده به صورت اتمیک انجام می‌شوند (همه با هم یا هیچ‌کدام)، استفاده می‌شوند.
+
+**مثال: استفاده از تراکنش‌ها در PDO:**
+
+```php
+<?php
+try {
+    $conn->beginTransaction(); // شروع تراکنش
+    $conn->exec("INSERT INTO users (username, email) VALUES ('Alice', 'alice@example.com')");
+    $conn->exec("INSERT INTO users (username, email) VALUES ('Bob', 'bob@example.com')");
+    $conn->commit(); // تایید تراکنش
+    echo "New records created successfully";
+} catch (PDOException $e) {
+    $conn->rollBack(); // لغو تراکنش در صورت خطا
+    echo "Error: " . $e->getMessage();
+}
+?>
+```
+
+### **9.5 استفاده از SQLite در PHP**
+
+
+
+SQLite یک پایگاه داده کوچک و سبک است که نیاز به نصب سرور ندارد و به‌صورت داخلی با PHP کار می‌کند. این پایگاه داده برای برنامه‌های کوچک و زمانی که به یک پایگاه داده ساده نیاز دارید، مناسب است.
+
+**مثال: اتصال به پایگاه داده SQLite و ایجاد یک جدول:**
+
+```php
+<?php
+try {
+    $conn = new PDO("sqlite:mydatabase.db");
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    echo "Connected to SQLite database successfully.";
+
+    $sql = "CREATE TABLE users (
+        id INTEGER PRIMARY KEY,
+        username TEXT NOT NULL,
+        email TEXT NOT NULL
+    )";
+    $conn->exec($sql);
+    echo "Table 'users' created successfully.";
+} catch (PDOException $e) {
+    echo "Error: " . $e->getMessage();
+}
+?>
+```
+
+### **9.6 تمرین‌های فصل نهم**
+
+1. **اتصال به پایگاه داده MySQL:** برنامه‌ای بنویسید که به یک پایگاه داده MySQL متصل شود و یک جدول ایجاد کند.
+2. **استفاده از دستورات آماده در MySQLi:** برنامه‌ای بنویسید که داده‌های کاربران را به صورت امن وارد یک جدول کند.
+3. **استفاده از PDO برای خواندن داده‌ها:** برنامه‌ای بنویسید که از PDO برای خواندن داده‌ها از یک جدول استفاده کند.
+4. **مدیریت خطاها و تراکنش‌ها در پایگاه داده:** برنامه‌ای بنویسید که چندین دستور SQL را به صورت تراکنش اجرا کند و در صورت بروز خطا، تراکنش را لغو کند.
+5. **کار با SQLite:** برنامه‌ای بنویسید که با استفاده از SQLite یک پایگاه داده ایجاد کرده و داده‌ها را مدیریت کند.
+
+### **خلاصه فصل نهم**
+
+در این فصل، با نحوه کار با پایگاه داده‌ها در PHP آشنا شدید. روش‌های مختلفی برای اتصال به پایگاه داده‌ها و اجرای دستورات SQL بررسی شد. همچنین، نکات امنیتی و بهینه‌سازی برای کار با پایگاه داده‌ها توضیح داده شدند. استفاده از MySQLi و PDO، دو روش رایج برای ارتباط با پایگاه داده‌ها هستند که هر دو امکاناتی برای مدیریت ایمن و کارآمد داده‌ها فراهم می‌کنند. در نهایت، به SQLite به عنوان یک گزینه سبک و داخلی برای ذخیره داده‌ها پرداخته شد.
 
 ---
 
-## تمرین‌های فصل نهم
 
-1. **اتصال به MySQL**: یک اسکریپت PHP بنویسید که به یک پایگاه داده MySQL متصل شود و پیامی را برای موفقیت یا شکست اتصال نمایش دهد.
-
-2. **ایجاد جدول و درج داده‌ها**: یک اسکریپت بنویسید که یک جدول در پایگاه داده ایجاد کرده و چند رکورد در آن اضافه کند.
-
-3. **خواندن و نمایش داده‌ها**: یک اسکریپت بنویسید که تمام رکوردهای موجود در یک جدول را خوانده و در مرورگر نمایش دهد.
-
-4. **بروزرسانی رکوردها**: یک رکورد مشخص در جدول را با استفاده از `UPDATE` بروزرسانی کنید.
-
-5. **حذف رکوردها**: یک رکورد مشخص را از جدول با استفاده از `DELETE` حذف کنید.
-
-6. **جلوگیری از SQL Injection**: یک اسکریپت بنویسید که داده‌های ورودی کاربر را با استفاده از `mysqli_real_escape_string()` پاک‌سازی کند و سپس آن‌ها را در پایگاه داده ذخیره کند.
-
----
-
-## خلاصه فصل نهم
-
-در این فصل، با پایگاه داده‌ها و نحوه استفاده از MySQL با PHP آشنا شدید. شما یاد گرفتید که چگونه به MySQL متصل شوید و عملیات CRUD (ایجاد، خواندن، بروزرسانی، حذف) را انجام دهید. همچنین با اصول امنیتی مانند جلوگیری از SQL Injection آشنا شدید. در نهایت، به ORM ها و ابزارهای مرتبط معرفی شدید. کار با پایگاه داده‌ها یکی از مهم‌ترین بخش‌های برنامه‌نویسی کاربردی است و در این فصل، مهارت‌های لازم برای کار با MySQL در PHP را به دست آوردید.
-
----
 </div>
