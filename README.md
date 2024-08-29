@@ -1,55 +1,39 @@
-# php-az-negah-no
+# A Fresh Look at PHP
 
+<div dir="ltr" style="font-family: 'Vazir', sans-serif; line-height: 1.8;">
 
-<div dir="rtl" style="font-family: 'Vazir', sans-serif; line-height: 1.8;">
+## Introduction
 
-# نگاهی نو به PHP آموزش PHP به زبان ساده و روان است
+"A Fresh Look at PHP" is a comprehensive guide for learning PHP. The book is available in both English and Persian (Farsi). The content is organized into two main directories: `en` for the English version and `fa` for the Persian version. This book covers everything from the basics to advanced concepts, designed to help you master PHP programming efficiently.
 
-## معرفی
- "PHP از نگاه نو" یک راهنمای جامع و کاربردی برای یادگیری زبان برنامه‌نویسی PHP است. این کتاب به‌صورت گام‌به‌گام طراحی شده و تمامی مبانی، اصول و مفاهیم پیشرفته PHP را از سطح مبتدی تا حرفه‌ای پوشش می‌دهد. اگر تازه وارد دنیای برنامه‌نویسی شده‌اید یا قصد دارید مهارت‌های PHP خود را ارتقا دهید، این کتاب همراه شما خواهد بود. همچنین با پروژه‌های عملی و تمرین‌های کاربردی، شما را برای ورود به بازار کار و توسعه وب آماده می‌کند.
+## Directory Structure
 
-## ویژگی‌های کتاب
-- **مبانی PHP**: آموزش مفاهیم پایه‌ای و اساسی زبان PHP.
-- **برنامه‌نویسی شیءگرا (OOP)**: آشنایی با مفاهیم شیءگرایی و کاربرد آن‌ها در PHP.
-- **کار با پایگاه داده‌ها**: اتصال به پایگاه داده‌ها، انجام عملیات CRUD و محافظت در برابر SQL Injection.
-- **امنیت در PHP**: معرفی بهترین شیوه‌های امنیتی در PHP.
-- **پروژه عملی**: پیاده‌سازی یک پروژه واقعی با PHP برای مرور تمام مطالب آموخته شده.
+- **`en/`**: Contains the English version of the book.
+- **`fa/`**: Contains the Persian version of the book.
 
-## فهرست مطالب
-1. [مقدمه](chapter-one.md)
-2. [مبانی PHP](chapter-two.md)
-3. [توابع و کار با آن‌ها](chapter-three.md)
-4. [آرایه‌ها](chapter-four.md)
-5. [کار با رشته‌ها](chapter-five.md)
-6. [برنامه‌نویسی شیءگرا (OOP)](chapter-six.md)
-7. [مدیریت خطاها و استثناها](chapter-seven.md)
-8. [کار با فایل‌ها](chapter-eight.md)
-9. [پایگاه داده‌ها](chapter-nine.md)
-10. [تعامل با فرم‌ها و وب](chapter-ten.md)
-11. [امنیت در PHP](chapter-eleven.md)
-12. [کار با API‌ها](chapter-twelve.md)
-13. [معرفی چارچوب‌های PHP](chapter-thirteen.md)
-14. [پروژه عملی](chapter-fourteen.md)
-15. [نتیجه‌گیری](chapter-fifteen.md)
+## Book Features
+- **PHP Fundamentals**: Understanding the core concepts and basics of PHP.
+- **Object-Oriented Programming (OOP)**: Introduction to OOP principles and their application in PHP.
+- **Database Interaction**: Connecting to databases, performing CRUD operations, and preventing SQL Injection.
+- **PHP Security**: Best practices for securing your PHP applications.
+- **Practical Projects**: Real-world projects to apply and review what you have learned.
 
-## نحوه استفاده
-برای استفاده از این کتاب، می‌توانید فایل‌های مرتبط را دانلود کرده و به صورت محلی مطالعه کنید. هر فصل شامل توضیحات کامل، مثال‌های کدنویسی و تمرین‌های عملی است. برای شروع، به فصل "[مقدمه](chapter-one.md)" بروید.
+## How to Use
+- To access the English version of the book, navigate to the `en` directory.
+- To access the Persian version of the book, navigate to the `fa` directory.
 
-## مشارکت
-اگر علاقه‌مند به مشارکت در این پروژه هستید، می‌توانید به ما کمک کنید:
-- اشکالات موجود را گزارش دهید.
-- پیشنهادات خود را برای بهبود کتاب ارائه دهید.
-- محتوای جدید اضافه کنید یا محتوای موجود را بهبود ببخشید.
+Each directory contains chapters organized in Markdown files. You can view the content online or download it for offline use.
 
-## نحوه مشارکت
-1. این مخزن را Fork کنید.
-2. تغییرات خود را اعمال کنید.
-3. یک Pull Request ایجاد کنید.
+## How to Contribute
+If you would like to contribute to this project, you can:
+- Report any issues.
+- Suggest improvements or additional content.
+- Submit changes or enhancements via a Pull Request.
 
-## مجوز
-این پروژه تحت مجوز MIT منتشر شده است. برای اطلاعات بیشتر، فایل [LICENSE](LICENSE) را مشاهده کنید.
+## License
+This project is licensed under the MIT License. For more details, please refer to the `LICENSE` file in the repository.
 
-## ارتباط با ما
-اگر سوالی دارید یا به کمک نیاز دارید، می‌توانید از طریق jabermis2021@gmail.com  و یا ایدی تلگرامی @Dr_laravel  با ما در ارتباط باشید.
+## Contact
+For questions or support, please reach out to us at jabermis2021@gmail.com or via Telegram ID @Dr_laravel.
 
 </div>
